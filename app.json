@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Rajasthan Bus Tracking",
+    "slug": "rajasthan-bus-tracking",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/bus_logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FF8C00"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.rajasthanbustracking"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FF8C00"
+      },
+      "package": "com.yourcompany.rajasthanbustracking",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
