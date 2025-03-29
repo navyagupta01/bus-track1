@@ -12,10 +12,10 @@ const MapScreen = ({ navigation, route }) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const mapRef = useRef(null);
 
-  // Initial region - centered on Rajasthan
+  // Initial region - centered on Jaipur (Rajasthan)
   const initialRegion = {
-    latitude: 26.9124, 
-    longitude: 75.7873, // Jaipur coordinates
+    latitude: 26.9124, // Jaipur coordinates
+    longitude: 75.7873,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
@@ -35,9 +35,8 @@ const MapScreen = ({ navigation, route }) => {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
-        
-        // Simulate fetching bus location from API
-        // In a real app, you would fetch this from your backend
+
+        // Simulate fetching bus location
         simulateBusLocation();
       } catch (error) {
         setErrorMsg('Could not get your location');
@@ -48,34 +47,32 @@ const MapScreen = ({ navigation, route }) => {
     })();
   }, []);
 
-  // Simulate bus location updates - in a real app, this would be replaced with an API call
+  // Simulate bus location updates - using the busNumber, source, and destination from route params
   const simulateBusLocation = () => {
-    // Simulate a bus location near Jaipur
     const simulatedBusLocation = {
       latitude: 26.9154, // Slightly offset from Jaipur center
       longitude: 75.7973,
       heading: 45, // Heading in degrees
       speed: 40, // Speed in km/h
       timestamp: new Date().toISOString(),
-      busNumber: busNumber || 'RJ-14-1234',
-      route: `${source || 'Jaipur'} to ${destination || 'Ajmer'}`,
+      busNumber: busNumber || 'RJ-1234', // Use the busNumber from route params
+      route: `${source || 'Jaipur'} to ${destination || 'Udaipur'}`, // Use source and destination from route params
       eta: '30 mins',
     };
-    
+
     setBusLocation(simulatedBusLocation);
-    
+
     // Simulate movement every 10 seconds
     setInterval(() => {
       setBusLocation(prevLocation => {
         if (!prevLocation) return simulatedBusLocation;
-        
-        // Simulate movement in a small random direction
+
         return {
           ...prevLocation,
           latitude: prevLocation.latitude + (Math.random() - 0.5) * 0.001,
           longitude: prevLocation.longitude + (Math.random() - 0.5) * 0.001,
           timestamp: new Date().toISOString(),
-          eta: Math.floor(Math.random() * 30 + 5) + ' mins', // Random ETA between 5-35 mins
+          eta: Math.floor(Math.random() * 30 + 5) + ' mins',
         };
       });
     }, 10000);
@@ -101,6 +98,17 @@ const MapScreen = ({ navigation, route }) => {
     );
   }
 
+  if (errorMsg) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{errorMsg}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.retryButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -110,7 +118,7 @@ const MapScreen = ({ navigation, route }) => {
         <Text style={styles.headerTitle}>Live Bus Tracking</Text>
         <View style={{ width: 24 }} />
       </View>
-      
+
       <View style={styles.mapContainer}>
         <MapView
           ref={mapRef}
@@ -133,8 +141,7 @@ const MapScreen = ({ navigation, route }) => {
               </View>
             </Marker>
           )}
-          
-          {/* Display a route line (in a real app, this would be the actual route) */}
+
           {currentLocation && busLocation && (
             <Polyline
               coordinates={[
@@ -142,7 +149,7 @@ const MapScreen = ({ navigation, route }) => {
                 {
                   latitude: busLocation.latitude,
                   longitude: busLocation.longitude,
-                }
+                },
               ]}
               strokeColor="#FF8C00"
               strokeWidth={3}
@@ -150,37 +157,37 @@ const MapScreen = ({ navigation, route }) => {
             />
           )}
         </MapView>
-        
+
         <TouchableOpacity style={styles.centerButton} onPress={centerMap}>
           <Ionicons name="locate" size={24} color="#FF8C00" />
         </TouchableOpacity>
       </View>
-      
+
       {busLocation && (
         <View style={styles.busInfoPanel}>
           <View style={styles.busInfoHeader}>
             <Text style={styles.busNumber}>Bus {busLocation.busNumber}</Text>
             <Text style={styles.busRoute}>{busLocation.route}</Text>
           </View>
-          
+
           <View style={styles.busInfoDetails}>
             <View style={styles.infoRow}>
               <Ionicons name="time-outline" size={20} color="#333" />
               <Text style={styles.infoText}>ETA: {busLocation.eta}</Text>
             </View>
-            
+
             <View style={styles.infoRow}>
               <Ionicons name="speedometer-outline" size={20} color="#333" />
               <Text style={styles.infoText}>Speed: {busLocation.speed} km/h</Text>
             </View>
-            
+
             <View style={styles.infoRow}>
               <Ionicons name="compass-outline" size={20} color="#333" />
               <Text style={styles.infoText}>Heading: {busLocation.heading}°</Text>
             </View>
           </View>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.shareButton}
             onPress={() => Alert.alert('Share', 'Sharing bus location is not implemented in this demo')}
           >
@@ -208,6 +215,29 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#FFFFFF',
     fontSize: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FF8C00',
+  },
+  errorText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  retryButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  retryButtonText: {
+    color: '#FF8C00',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   header: {
     flexDirection: 'row',
@@ -305,4 +335,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapScreen; 
+export default MapScreen;

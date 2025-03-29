@@ -1,8 +1,8 @@
-// screens/LoginScreen.js
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, TextInput, Image, ActivityIndicator, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Add AsyncStorage for token storage
-import { BASE_URL } from '../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const BASE_URL = 'https://rajasthan-bus-backend.onrender.com/api'; // Replace with your Render URL
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -22,7 +22,9 @@ const LoginScreen = ({ navigation }) => {
     try {
       const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ username, password }),
       });
 
@@ -32,16 +34,15 @@ const LoginScreen = ({ navigation }) => {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Store the token in AsyncStorage
       await AsyncStorage.setItem('userToken', data.token);
-      console.log('Login successful, token stored:', data.token);
+      console.log('✅ Login successful, token stored:', data.token);
 
-      // Navigate to Home screen
       navigation.reset({
         index: 0,
         routes: [{ name: 'Home' }],
       });
     } catch (err) {
+      console.log('❌ Login Error:', err.message);
       setError(err.message);
       Alert.alert('Login Failed', err.message);
     } finally {
@@ -77,10 +78,6 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry
         />
         
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </TouchableOpacity>
-        
         {loading ? (
           <ActivityIndicator size="large" color="#FF8C00" style={styles.loader} />
         ) : (
@@ -89,15 +86,11 @@ const LoginScreen = ({ navigation }) => {
           </TouchableOpacity>
         )}
         
-        {error && (
-          <Text style={styles.errorText}>{error}</Text>
-        )}
+        {error && <Text style={styles.errorText}>{error}</Text>}
         
         <View style={styles.accountContainer}>
           <Text style={styles.accountText}>Don't Have An Account?</Text>
-          <TouchableOpacity 
-            onPress={() => Alert.alert('Coming Soon', 'Sign up functionality will be available in a future update.')}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
             <Text style={styles.createText}>Create</Text>
           </TouchableOpacity>
         </View>
@@ -106,7 +99,6 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-// Styles remain unchanged
 const styles = StyleSheet.create({
   errorText: {
     color: 'red',
@@ -148,13 +140,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginBottom: 15,
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 20,
-  },
-  forgotPasswordText: {
-    color: '#FF8C00',
-  },
   loginButton: {
     backgroundColor: '#FF8C00',
     borderRadius: 5,
@@ -179,7 +164,6 @@ const styles = StyleSheet.create({
     color: '#FF8C00',
     fontWeight: 'bold',
   },
-  // Other styles omitted for brevity
 });
 
 export default LoginScreen;

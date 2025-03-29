@@ -1,59 +1,46 @@
-import 'react-native-gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import StackNavigator from './navigation/StackNavigator'; // Adjust path if moved to navigation/
-import * as Location from 'expo-location';
-import { useState, useEffect } from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import HomeScreen from './screens/HomeScreen';
+import TrackScreen from './screens/TrackScreen';
+import PlanTripScreen from './screens/PlanTripScreen';
+import SafetyScreen from './screens/SafetyScreen';
+import MapScreen from './screens/MapScreen';
 
-async function requestLocationPermissions() {
-  try {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access location was denied.');
-      return false;
-    }
-    return true;
-  } catch (error) {
-    alert('Error: ' + error.message);
-    return false;
-  }
-}
+const Stack = createStackNavigator();
 
-export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [permissionGranted, setPermissionGranted] = useState(false);
+const App = () => {
+  const [initialRoute, setInitialRoute] = useState('Track'); // Set initial route to Track for testing
 
+  // Temporarily bypass token check for testing
+  /*
   useEffect(() => {
-    (async () => {
-      const granted = await requestLocationPermissions();
-      setPermissionGranted(granted);
-      setIsLoading(false);
-    })();
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        setInitialRoute('Home');
+      }
+    };
+    checkToken();
   }, []);
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#FF8C00" />
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
-
-  if (!permissionGranted) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Location permission is required to use this app.</Text>
-      </View>
-    );
-  }
+  */
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <StackNavigator />
-      </NavigationContainer>
-    </GestureHandlerRootView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Track" component={TrackScreen} />
+        <Stack.Screen name="PlanTrip" component={PlanTripScreen} />
+        <Stack.Screen name="Safety" component={SafetyScreen} />
+        <Stack.Screen name="Map" component={MapScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
+
+export default App;

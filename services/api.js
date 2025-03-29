@@ -2,7 +2,7 @@
 import { Alert } from 'react-native';
 
 // Base URL for the API - using the backend server URL
-const BASE_URL = 'http://192.168.29.167:3000/api';
+export const BASE_URL = 'http://192.168.29.167:3000/api';
 
 // Function to handle API errors
 const handleApiError = (error) => {

@@ -1,9 +1,23 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { logoutUser } from '../authService'; // Import from authService.js
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
+  const handleLogout = async () => {
+    const success = await logoutUser(); // Use authService logout
+    if (success) {
+      console.log('✅ Logout Successful');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } else {
+      console.log('❌ Logout Failed');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,7 +45,7 @@ const HomeScreen = () => {
           </View>
           <Text style={styles.menuText}>Plan your Trip</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity 
           style={styles.menuItem}
           onPress={() => navigation.navigate('Safety')}
@@ -41,20 +55,9 @@ const HomeScreen = () => {
           </View>
           <Text style={styles.menuText}>Safety</Text>
         </TouchableOpacity>
-      </View>
-      
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem}>
-          <Text style={styles.tabIcon}>🏠</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Text style={styles.tabIcon}>🎟️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Text style={styles.tabIcon}>ℹ️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Text style={styles.tabIcon}>👤</Text>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -109,22 +112,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333333',
   },
-  tabBar: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-    paddingVertical: 10,
-  },
-  tabItem: {
-    flex: 1,
+  logoutButton: {
+    backgroundColor: '#FF0000',
+    borderRadius: 5,
+    paddingVertical: 12,
     alignItems: 'center',
-    paddingVertical: 10,
+    marginTop: 20,
+    width: '50%',
   },
-  tabIcon: {
-    fontSize: 24,
+  logoutText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
 export default HomeScreen;
-

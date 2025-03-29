@@ -46,7 +46,7 @@ export const COLORS = {
   
   // App constants
   export const APP_CONSTANTS = {
-    API_BASE_URL: 'https://rajasthan-bus-api.example.com/api',
+    API_BASE_URL: 'https://sxdiknihhuvfvzgsacez.supabase.co/auth/v1/token?grant_type=password',
     LOCATION_TRACKING_INTERVAL: 30000, // 30 seconds
     BUS_TYPES: [
       { id: 'ac', label: 'AC' },

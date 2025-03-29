@@ -87,13 +87,13 @@ const PlanTripScreen = ({ navigation }) => {
       </View>
       
       <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.tabIcon}>🏠</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem}>
           <Text style={styles.tabIcon}>🎟️</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Safety')}>
           <Text style={styles.tabIcon}>ℹ️</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem}>

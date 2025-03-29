@@ -1,29 +1,60 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, TextInput, Alert } from 'react-native';
+import { getToken } from '../authService';
 
 const TrackScreen = ({ navigation }) => {
-  const [location1, setLocation1] = useState('');
-  const [location2, setLocation2] = useState('');
+  const [location1, setLocation1] = useState('Jaipur'); // Pre-filled Starting Point
+  const [location2, setLocation2] = useState('Udaipur'); // Pre-filled Destination
   const [busNumber, setBusNumber] = useState('');
   const [arrivalTime, setArrivalTime] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
+  const [status, setStatus] = useState('');
   const [showBusInfo, setShowBusInfo] = useState(false);
 
-  const handleSearch = () => {
-    // Check if location fields are filled
+  const handleSearch = async () => {
     if (!location1 || !location2) {
-      alert('Please enter both locations');
+      Alert.alert('Error', 'Please enter both locations');
       return;
     }
-    
-    // Show bus info in this screen
-    setShowBusInfo(true);
-    
-    // In a production app, navigate to Map screen
-    // navigation.navigate('Map', {
-    //   source: location1,
-    //   destination: location2,
-    //   busNumber: 'RJ-14-1234',
-    // });
+
+    // Check if the locations match the sample route (Jaipur to Udaipur)
+    if (location1.toLowerCase() !== 'jaipur' || location2.toLowerCase() !== 'udaipur') {
+      Alert.alert('Error', 'Only Jaipur to Udaipur route is available for testing');
+      return;
+    }
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        Alert.alert('Error', 'You need to log in to track a bus');
+        navigation.navigate('Login');
+        return;
+      }
+
+      // Sample data for Jaipur to Udaipur route
+      const sampleData = {
+        busNumber: 'RJ-1234',
+        arrivalTime: '10:30 AM',
+        currentLocation: 'Jaipur',
+        status: 'On Time',
+      };
+
+      setBusNumber(sampleData.busNumber);
+      setArrivalTime(sampleData.arrivalTime);
+      setCurrentLocation(sampleData.currentLocation);
+      setStatus(sampleData.status);
+      setShowBusInfo(true);
+
+      // Navigate to Map screen with parameters
+      navigation.navigate('Map', {
+        source: location1,
+        destination: location2,
+        busNumber: sampleData.busNumber,
+      });
+    } catch (err) {
+      console.error('❌ Track Bus Error:', err.message);
+      Alert.alert('Error', err.message);
+    }
   };
 
   return (
@@ -73,22 +104,22 @@ const TrackScreen = ({ navigation }) => {
             
             <View style={styles.busInfoRow}>
               <Text style={styles.busInfoLabel}>Bus Number:</Text>
-              <Text style={styles.busInfoValue}>RJ-14-1234</Text>
+              <Text style={styles.busInfoValue}>{busNumber}</Text>
             </View>
             
             <View style={styles.busInfoRow}>
               <Text style={styles.busInfoLabel}>Current Location:</Text>
-              <Text style={styles.busInfoValue}>Sodala, Jaipur</Text>
+              <Text style={styles.busInfoValue}>{currentLocation}</Text>
             </View>
             
             <View style={styles.busInfoRow}>
               <Text style={styles.busInfoLabel}>Arrival Time:</Text>
-              <Text style={styles.busInfoValue}>10:30 AM</Text>
+              <Text style={styles.busInfoValue}>{arrivalTime}</Text>
             </View>
             
             <View style={styles.busInfoRow}>
               <Text style={styles.busInfoLabel}>Status:</Text>
-              <Text style={styles.busInfoValue}>On Time</Text>
+              <Text style={styles.busInfoValue}>{status}</Text>
             </View>
           </View>
         )}
